@@ -8,6 +8,11 @@ GEM
       net-ssh (>= 2.0.14)
       net-ssh-gateway (>= 1.1.0)
     highline (1.6.21)
+    httparty (0.13.5)
+      json (~> 1.8)
+      multi_xml (>= 0.5.2)
+    json (1.8.3)
+    multi_xml (0.5.5)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-sftp (2.1.2)
@@ -29,4 +34,5 @@ PLATFORMS
 
 DEPENDENCIES
   capistrano (~> 2.0)
+  httparty
   sinatra

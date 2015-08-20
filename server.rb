@@ -1,59 +1,33 @@
 require 'rubygems'
 require 'bundler'
 
+require 'httparty'
 require 'etc'
 require 'socket'
 
 Bundler.require
 
-# use SendGrid?
-Pony.options = if ENV['EMAIL_MODE'] == 'sendgrid' then
-                  {
-                    :via => :smtp,
-                    :via_options => {
-                      :address => 'smtp.sendgrid.net',
-                      :port => '587',
-                      :domain => ENV['SENDGRID_DOMAIN'],
-                      :user_name => ENV['SENDGRID_USERNAME'],
-                      :password => ENV['SENDGRID_PASSWORD'],
-                      :authentication => :plain,
-                      :enable_starttls_auto => true
-                    }
-                  }
-                # otherwise, default to sendmail
-                else
-                  {
-                    via: :sendmail,
-                    via_options: { arguments: '-i' }
-                  }
-                end
-
-def send_mail(from, to, body)
-  subject = "Twilio SMS gateway: new SMS to #{to}"
-  content = "Hi,\n\nTwilio SMS gateway at #{Socket.gethostname} has received this SMS to #{to}:\n\n#{body}\n"
-
-  $stderr.puts("#{from} -> #{to}: #{body.inspect}")
-
-  Pony.mail(from: settings.mail_from, to: settings.mail_to, subject: subject, body: content)
+get '/' do
+  "Working."
 end
 
-configure do
-  login = Etc.getlogin
-  hostname = Socket.gethostname
+class Partay
+  include HTTParty
+  base_uri 'http://localhost:3000'
+end
 
-  set :port, ENV['PORT'] || 3000
-  set :mail_from, ENV['MAIL_FROM'] || "root@#{hostname}"
-  set :mail_to, ENV['MAIL_TO'] || "#{login}@#{hostname}"
+def post_to_google from, message
+  HTTParty.post(ENV['GOOGLE_FORM_URL'],
+  {
+    :body => [ { "entry.1988909797" => Time.now, "entry.187171525" => from, "entry.1929834757" => message } ].to_json,
+  })
 end
 
 post '/sms' do
   from = params['From']
   body = params['Body']
-  to = params['To'] || "unknown"
-
-  if from && body
-    send_mail(from, to, body)
-  end
+  post_to_google(from, message)
 
   "<Response></Response>"
 end
+

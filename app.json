@@ -1,0 +1,19 @@
+{
+  "name": "Twilio SMS-to-google-form",
+  "description": "A small Ruby server that receives incoming SMS callbacks from Twilio and forwards the contents to a specified google form.",
+  "repository": "https://github.com/rememberlenny/twilio-sms-to-google-form",
+  "env": {
+    "TWILIO_ID": {
+      "description": "Twilio key",
+      "required": true
+    },
+    "TWILIO_SECRET": {
+      "description": "Twilio secret",
+      "required": true
+    },
+    "GOOGLE_FORM_URL": {
+      "description": "Google form",
+      "required": true
+    }
+  }
+}
